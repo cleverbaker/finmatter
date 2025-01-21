@@ -6,6 +6,7 @@ let render;
 let runner;
 let box;
 let circle1;
+let circle2;
 let floor;
 
 // const canvasEl = document.getElementById('world')
@@ -55,6 +56,33 @@ function setup() {
 
     runner = Runner.create();
     Runner.run(runner, engine);
+
+    // delay 3 seconds then add a new circle
+    setTimeout(() => {
+        circle2 = Bodies.circle(220, 100, 75, {
+            density: 0.042,
+            friction: 0.1,
+            frictionAir: 0.00001,
+            restitution: 0.8,
+            render: {
+                fillStyle: 'blue',
+                strokeStyle: 'black',
+                lineWidth: 1
+            }
+        });
+        Composite.add(engine.world, circle2);
+        // delay 9 seconds then add a new box
+        setTimeout(() => {
+            Composite.remove(engine.world, circle2);
+        }, 2000);
+    }, 3000);
+
+    // delay 6 seconds then add a remove the circles and box
+    setTimeout(() => {
+        Composite.remove(engine.world, box);
+        Composite.remove(engine.world, circle1);
+    }, 5000);
+
 }
 
 window.addEventListener('load', function() {
