@@ -51,6 +51,11 @@ function setup() {
     let floor = Bodies.rectangle(300, 600, 600, 60, { isStatic: true });
     Composite.add(engine.world, floor);
 
+    let wall_left = Bodies.rectangle(3, 300, 6, 600, { isStatic: true });
+    let wall_right = Bodies.rectangle(597, 300, 6, 600, { isStatic: true });
+    Composite.add(engine.world, wall_left);
+    Composite.add(engine.world, wall_right);
+
 
     Render.run(render);
 
