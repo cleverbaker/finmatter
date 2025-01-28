@@ -95,6 +95,10 @@
             })
         }
 
+        function addDrops (amount, is_positive, last_drop_time, last_drop_radius) {
+
+        }
+
 
         reader.onload = function (e) {
 
@@ -105,6 +109,97 @@
             const json = csvToJson(csv);
 
             console.log(json);
+
+            let current_amount = 0;
+            let current_radius = 0;
+            let current_is_positive = false;
+            let current_time = 0;
+            let last_drop_time = 0;
+            let last_drop_radius = 0;
+
+            let current_delay = 0;
+
+            let current_list = {}
+
+
+            for (let i = 0; i < 10; i++) {
+                if (json[i]["Amount"])
+                {
+                    console.log(json[i]);
+                    console.log(json[i]["Amount"]);
+                    console.log(json[i]["Posting Date"]);
+                    console.log("Posting Date");
+                } else if (json[i]['"Amount"']) {
+                    console.log(json[i]);
+                    console.log(json[i]['"Amount"']);
+                    console.log(json[i]['"Posting Date"']);
+                    console.log('"Posting Date"');
+
+                    // parse the Posting Date and save as current_time
+                    const current_date = new Date(Date.parse(json[i]['"Posting Date"']));
+
+                    console.log(current_date);
+
+                    if (current_list[current_date.toDateString()]) {
+                        if (last_drop_time) {
+                            last_drop_time = current_date.getDate();
+                        } else {
+                            current_delay = last_drop_time - current_date.getDate();
+                            last_drop_time = current_date.getDate();
+                        }
+                        current_list[current_date.toDateString()].push({"radius * 10":
+                                (Math.round(Math.sqrt(Math.abs(Math.round( Number(json[i]['"Amount"']) * (
+                                    100 / 3.14)) / 100)) * 1000) / 100),
+                            "data":
+                                `amount: ${json[i]['"Amount"']}; current_delay: ${current_delay}; date: ${last_drop_time}`});
+
+                        console.log(current_date.getDate())
+                    } else {
+                        if (last_drop_time) {
+                            current_delay = last_drop_time - current_date.getDate();
+                            last_drop_time = current_date.getDate();
+                        } else {
+
+                            last_drop_time = current_date.getDate();
+                        }
+                        current_list[current_date.toDateString()] = [{"radius * 10":
+                                (Math.round(Math.sqrt(Math.abs(Math.round( Number(json[i]['"Amount"']) * (
+                                    100 / 3.14)) / 100)) * 1000) / 100),
+                                    "data":
+                                `amount: ${json[i]['"Amount"']}; current_delay: ${current_delay}; date: ${last_drop_time}`}];
+
+                        console.log(current_date.getDate())
+                    }
+                }
+            }
+
+            console.log(current_list);
+
+            let temp = [];
+
+            for (let key in current_list) {
+                temp.push(current_list[key]);
+            }
+
+            let temp_reversed = temp.reverse();
+
+            for (let i = 0; i < temp_reversed.length; i++) {
+                for (let j = 0; j < temp_reversed[i].length; j++) {
+                    if (j) {
+                        setTimeout(() => {
+                            console.log(temp_reversed[i][j]);
+                        }, 3000);
+                    } else {
+                        setTimeout(() => {
+                            console.log(temp_reversed[i][j]);
+                        }, 9000);
+                    }
+                }
+            }
+
+
+
+
            /*
             const lines = csv.split("\n");
             const headers = lines[0].split(",");
