@@ -158,15 +158,20 @@
                         if (last_drop_time) {
                             current_delay = last_drop_time - current_date.getDate();
                             last_drop_time = current_date.getDate();
+
+                            console.log(current_date.getDate())
                         } else {
 
                             last_drop_time = current_date.getDate();
+
+
+                            console.log(current_date.getDate())
                         }
                         current_list[current_date.toDateString()] = [{"radius * 10":
                                 (Math.round(Math.sqrt(Math.abs(Math.round( Number(json[i]['"Amount"']) * (
                                     100 / 3.14)) / 100)) * 1000) / 100),
                                     "data":
-                                `amount: ${json[i]['"Amount"']}; current_delay: ${current_delay}; date: ${last_drop_time}`}];
+                                ""+`amount: ${json[i]['"Amount"']}; current_delay: ${current_delay}; date: ${last_drop_time}`}];
 
                         console.log(current_date.getDate())
                     }
@@ -226,7 +231,7 @@
             alert("Failed to read the file.");
         };
         // when mouse click, console log the data
-/*        document.addEventListener('click', function() {
+        document.addEventListener('click', function() {
             console.log(data[0]);
 
             const firstHundreds = data.slice(0, 100);
@@ -237,12 +242,10 @@
                 const num1 = Math.abs(Number(firstHundreds[i]["Amount"]));
                 const sqrt = Math.sqrt(Math.abs(Number(firstHundreds[i]["Amount"])));
 
-                console.log("148", num1)
-
-                console.log(sqrt);
+                console.log("amt", num1)
+                console.log("sqrt", sqrt);
             }
         });
-        */
         return result;
     }
 

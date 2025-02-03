@@ -46,7 +46,7 @@ function setup() {
         }
     });
 
-    Composite.add(engine.world, circle1);
+    //Composite.add(engine.world, circle1);
 
     let floor = Bodies.rectangle(300, 600, 600, 60, { isStatic: true });
     Composite.add(engine.world, floor);
@@ -78,7 +78,8 @@ function setup() {
         Composite.add(engine.world, circle2);
         // delay 9 seconds then add a new box
         setTimeout(() => {
-            Composite.remove(engine.world, circle2);
+            // Composite.add(engine.world, circle1);
+            // Composite.remove(engine.world, circle2);
         }, 2000);
     }, 3000);
 
