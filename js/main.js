@@ -30,9 +30,14 @@ function setup() {
     });
 
 
-    box = Bodies.rectangle(100, 100, 80, 80);
+    box = Bodies.rectangle(100, 100, 16, 80);
+
+    box.render.strokeStyle = 'black';
+    box.render.lineWidth = 10;
+
 
     Composite.add(engine.world, box);
+
 
     circle1 = Bodies.circle(220, 100, 75, {
         density: 0.042,
@@ -42,7 +47,7 @@ function setup() {
         render: {
             fillStyle: 'red',
             strokeStyle: 'black',
-            lineWidth: 1
+            strokeWidth: '5px'
         }
     });
 
