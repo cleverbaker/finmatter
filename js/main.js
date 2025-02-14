@@ -85,6 +85,8 @@ function setup() {
         setTimeout(() => {
             // Composite.add(engine.world, circle1);
             // Composite.remove(engine.world, circle2);
+            Composite.remove(engine.world, circle2);
+            addFiveBooks();
         }, 2000);
     }, 3000);
 
@@ -94,6 +96,22 @@ function setup() {
         Composite.remove(engine.world, circle1);
     }, 5000);
 
+}
+
+function addFiveBooks() {
+    let width = 20 + (Math.floor(Math.random() * 8) - Math.floor(Math.random() * 8))
+    let currentX = 100;
+    for (let i = 0; i < 21; i++) {
+        createBooks(width, 100 + Math.floor(Math.random() * 8), currentX, 100);
+        currentX += width + 4;
+    }
+}
+
+function createBooks(width, height, x, y) {
+    let book = Bodies.rectangle(x, y, width, height);
+    book.render.lineWidth = 2;
+    book.render.outline = true;
+    Composite.add(engine.world, book);
 }
 
 window.addEventListener('load', function() {
