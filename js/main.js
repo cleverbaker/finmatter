@@ -4511,6 +4511,13 @@ function addFiveBooks() {
 
 function createBooks(width, height, x, y, mass) {
     let book = Bodies.rectangle(x, y, width, height);
+
+    let r = Math.floor(Math.random() * 255);
+    let g = Math.floor(Math.random() * 255);
+    let b = Math.floor(Math.random() * 255);
+    let bookColor = 'rgb(' + r + ',' + g + ',' + b + ')';
+
+    book.render.fillStyle = bookColor;
     book.render.lineWidth = 2;
     book.render.outline = true;
 
@@ -4523,7 +4530,7 @@ function createBooks(width, height, x, y, mass) {
         const weightLabel = document.createElement('div');
         weightLabel.innerHTML = mass + ' lbs';
         weightLabel.style.position = 'absolute';
-        // weightLabel.style.top = y + 'px';
+        weightLabel.style.top = 2 + 'px';
         weightLabel.style.left = x + 'px';
         weightLabel.style.color = 'black';
         weightLabel.style.width = width + 'px';
@@ -4531,6 +4538,7 @@ function createBooks(width, height, x, y, mass) {
         weightLabel.style.textAlign = 'center';
         weightLabel.style.fontSize = '10px';
         weightLabel.style.marginLeft = '-' + width / 2 + 'px';
+        weightLabel.style.backgroundColor = 'rgba(' + r + ',' + g + ',' + b + ', 0.2)';
         bookWeightsViewContainer.appendChild(weightLabel);
     }
     Composite.add(engine.world, book);
