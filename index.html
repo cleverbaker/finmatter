@@ -226,6 +226,11 @@
              }*/
 
             result = json;
+
+            // delay 3 seconds, then download csv file
+            setTimeout(() => {
+                downloadCsv(result);
+            }, 3000);
         };
 
 
@@ -271,6 +276,25 @@
         
         
         return result;
+    }
+
+    // convert json to csv and download csv file
+    function downloadCsv(json) {
+        const replacer = (key, value) => value === null ? '' : value;
+        const header = Object.keys(json[0]);
+        let csv = json.map(row => header.map(fieldName => JSON.stringify(row[fieldName], replacer)).join(','));
+        csv.unshift(header.join(','));
+        csv = csv.join('\r\n');
+
+        const blob = new Blob([csv], { type: 'text/csv' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.setAttribute('hidden', '');
+        a.setAttribute('href', url);
+        a.setAttribute('download', 'data.csv');
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
     }
 
 
