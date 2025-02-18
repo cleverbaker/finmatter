@@ -4587,3 +4587,270 @@ function createBalls(radius, x, y, mass) {
 window.addEventListener('load', function () {
     setup();
 });
+
+
+/*********/
+
+const fileInput = document.getElementById("csvFile");
+
+let data = [ [], function (data) {
+    this[0] = data;
+} ];
+
+fileInput.addEventListener("change", function () {
+    const file = fileInput.files[0];
+    let returnedData = [];
+    if (file && file.type === "text/csv") {
+        data[1](handleCsvFile(file) || returnedData);
+
+    } else {
+        alert("Please select a CSV file.");
+    }
+});
+
+function handleCsvFile(file) {
+
+    console.log("CSV file has been selected: " + file.name);
+
+    const reader = new FileReader();
+    let result = [];
+
+
+    function csvToJson(text, quoteChar = '"', delimiter = ",") {
+        text = text.trim()
+        let rows = text.split("\n")
+        let headers = rows[0].split(",")
+
+        const regex = new RegExp(`\\s*(${quoteChar})?(.*?)\\1\\s*(?:${delimiter}|$)`, "gs")
+
+        const match = (line) => {
+            const matches = [...line.matchAll(regex)].map((m) => m[2])
+            // Ensure matches length matches headers length by padding with null values
+            const paddedMatches = Array.from({length: headers.length}, (_, i) => matches[i] ?? null)
+            return paddedMatches
+        }
+
+        let lines = text.split("\n")
+        const heads = headers ?? match(lines.shift())
+        lines = lines.slice(1)
+
+        return lines.map((line) => {
+            return match(line).reduce((acc, cur, i) => {
+                // replace blank matches with `null`
+                const val = cur === null || cur.length <= 0 ? null : Number(cur) || cur
+                const key = heads[i] ?? `{i}`
+                return {...acc, [key]: val}
+            }, {})
+        })
+    }
+
+    function addDrops (amount, is_positive, last_drop_time, last_drop_radius) {
+
+    }
+
+
+    reader.onload = function (e) {
+
+        console.log("Reading file...");
+        console.log(data);
+
+        const csv = e.target.result;
+
+        const json = csvToJson(csv);
+
+        console.log(json);
+
+        let current_amount = 0;
+        let current_radius = 0;
+        let current_is_positive = false;
+        let current_time = 0;
+        let last_drop_time = 0;
+        let last_drop_radius = 0;
+
+        let current_delay = 0;
+
+        let current_list = {}
+
+
+        for (let i = 0; i < 10; i++) {
+            if (json[i]["Amount"]) {
+                console.log(json[i]);
+                console.log(json[i]["Amount"]);
+                console.log(json[i]["Posting Date"]);
+                console.log("Posting Date");
+            } else if (json[i]['"Amount"']) {
+                console.log(json[i]);
+                console.log(json[i]['"Amount"']);
+                console.log(json[i]['"Posting Date"']);
+                console.log('"Posting Date"');
+
+                // parse the Posting Date and save as current_time
+                const current_date = new Date(Date.parse(json[i]['"Posting Date"']));
+
+                console.log(current_date);
+
+                if (current_list[current_date.toDateString()]) {
+                    if (last_drop_time) {
+                        current_delay = last_drop_time - current_date.getDate();
+                        last_drop_time = current_date.getDate();
+                    } else {
+                        last_drop_time = current_date.getDate();
+                    }
+                    current_list[current_date.toDateString()].push({
+                        "radius10x":
+                            (Math.round(Math.sqrt(Math.abs(Math.round(Number(json[i]['"Amount"']) * (
+                                100 / 3.14)) / 100)) * 1000) / 100),
+                        "data":
+                            `amount: ${json[i]['"Amount"']}; current_delay: ${current_delay}; date: ${last_drop_time}`
+                    });
+
+                    console.log(current_date.getDate())
+                } else {
+                    if (last_drop_time) {
+                        current_delay = last_drop_time - current_date.getDate();
+                        last_drop_time = current_date.getDate();
+
+                        console.log(current_date.getDate())
+                    } else {
+
+                        last_drop_time = current_date.getDate();
+
+
+                        console.log(current_date.getDate())
+
+                        current_list[current_date.toDateString()] = [{
+                            "radius10x":
+                                (Math.round(Math.sqrt(Math.abs(Math.round(Number(json[i]['"Amount"']) * (
+                                    100 / 3.14)) / 100)) * 1000) / 100),
+                            "data":
+                                "" + `amount: ${json[i]['"Amount"']}; current_delay: ${current_delay}; date: ${last_drop_time}`
+                        }];
+
+                        console.log(current_date.getDate())
+                    }
+                }
+            }
+        }
+
+        console.log(current_list);
+
+        let temp = [];
+
+        for (let key in current_list) {
+            temp.push(current_list[key]);
+        }
+
+
+
+
+        let temp_reversed = temp.reverse();
+        /*
+            for (let i = 0; i < temp_reversed.length; i++) {
+            for (let j = 0; j < temp_reversed[i].length; j++) {
+            if (j) {
+            setTimeout(() => {
+            console.log(temp_reversed[i][j]);
+        }, 0);
+        } else {
+            setTimeout(() => {
+            console.log(temp_reversed[i][j]);
+        }, 0);
+        }
+        }
+        }
+        */
+
+
+        for (let i = 0; i < 3; i++) {
+            for (let j = 0; j < temp_reversed.length; j++) {
+                // TODO: at the end of the timeout queue, add 4 seconds and then call addCircle
+                setTimeout()
+            }
+        }
+
+        /*
+         const lines = csv.split("\n");
+         const headers = lines[0].split(",");
+
+         for (let i = 1; i < lines.length; i++) {
+             const obj = {};
+             const currentline = lines[i].split(",");
+
+             for (let j = 0; j < headers.length; j++) {
+                 obj[headers[j]] = currentline[j];
+             }
+
+             result.push(obj);
+         }*/
+
+        result = json;
+
+        // delay 3 seconds, then download csv file
+        setTimeout(() => {
+            //downloadCsv(result);
+        }, 3000);
+    };
+
+
+    reader.readAsText(file);
+
+
+    reader.onerror = function () {
+        alert("Failed to read the file.");
+    };
+    // when mouse click, console log the data
+    /*document.addEventListener('click', function() {
+        console.log(data[0]);
+
+        const firstHundred = data.slice(0, 100);
+
+        for (let i = 0; i < firstHundred.length; i++) {
+            console.log(firstHundred[i]);
+
+            const num1 = Math.abs(Number(firstHundred[i]["Amount"]));
+            const sqrt = Math.sqrt(Math.abs(Number(firstHundred[i]["Amount"])));
+
+            console.log("amt", num1)
+            console.log("sqrt", sqrt);
+        }
+    });*/
+
+
+    document.addEventListener('click', function() {
+        console.log(data[0]);
+
+        const firstHundred = data[0].slice(0, 10);
+
+        for (let i = 0; i < firstHundred.length; i++) {
+            console.log(firstHundred[i]);
+
+            const num1 = Math.abs(Number(firstHundred[i]["Amount"]));
+            const sqrt = Math.sqrt(Math.abs(Number(firstHundred[i]["Amount"])));
+
+            console.log("amt", num1)
+            console.log("sqrt", sqrt);
+        }
+    });
+
+
+    return result;
+}
+
+// convert json to csv and download csv file
+function downloadCsv(json) {
+    const replacer = (key, value) => value === null ? '' : value;
+    const header = Object.keys(json[0]);
+    let csv = json.map(row => header.map(fieldName => JSON.stringify(row[fieldName], replacer)).join(','));
+    csv.unshift(header.join(','));
+    csv = csv.join('\r\n');
+
+    const blob = new Blob([csv], {type: 'text/csv'});
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.setAttribute('hidden', '');
+    a.setAttribute('href', url);
+    a.setAttribute('download', 'data.csv');
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+}
