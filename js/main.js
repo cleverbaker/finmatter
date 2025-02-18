@@ -1,3 +1,4 @@
+
 const {Engine, Body, Bodies, World, Composite, Render, Runner} = Matter;
 
 let engine;
@@ -2286,7 +2287,8 @@ const booksData = [
                 "value": 9.4488,
                 "unit": "inches"
             }
-        }},
+        }
+    },
     {
         "dimensions_structured": {
             "length": {
@@ -3124,7 +3126,8 @@ const booksData = [
                 "value": 1.85039,
                 "unit": "inches"
             }
-        }},
+        }
+    },
     {
         "dimensions_structured": {
             "length": {
@@ -4358,7 +4361,7 @@ const booksData = [
 // const canvasEl = document.getElementById('world')
 
 function setup() {
-   // noCanvas();
+    // noCanvas();
     engine = Matter.Engine.create();
     world = engine.world;
     render = Matter.Render.create({
@@ -4414,11 +4417,11 @@ function setup() {
 
     //Composite.add(engine.world, circle1);
 
-    let floor = Bodies.rectangle(300, 600, 600, 60, { isStatic: true });
+    let floor = Bodies.rectangle(300, 600, 600, 60, {isStatic: true});
     Composite.add(engine.world, floor);
 
-    let wall_left = Bodies.rectangle(3, 300, 6, 600, { isStatic: true });
-    let wall_right = Bodies.rectangle(597, 300, 6, 600, { isStatic: true });
+    let wall_left = Bodies.rectangle(3, 300, 6, 600, {isStatic: true});
+    let wall_right = Bodies.rectangle(597, 300, 6, 600, {isStatic: true});
     Composite.add(engine.world, wall_left);
     Composite.add(engine.world, wall_right);
 
@@ -4503,7 +4506,7 @@ function addFiveBooks() {
     let mass;
 
     for (let i = 0; i < 21; i++) {
-        mass = booksData[i].dimensions_structured.weight.value ? Math.round(booksData[i].dimensions_structured.weight.value * 100)/100 : false;
+        mass = booksData[i].dimensions_structured.weight.value ? Math.round(booksData[i].dimensions_structured.weight.value * 100) / 100 : false;
         createBooks(width, 100 + Math.floor(Math.random() * 8), currentX, 100, mass);
         currentX += width + 4;
     }
@@ -4520,7 +4523,6 @@ function createBooks(width, height, x, y, mass) {
     book.render.fillStyle = bookColor;
     book.render.lineWidth = 2;
     book.render.outline = true;
-
 
 
     if (mass) {
@@ -4547,6 +4549,41 @@ function createBooks(width, height, x, y, mass) {
 
 }
 
-window.addEventListener('load', function() {
+
+function createBalls(radius, x, y, mass) {
+    let ball = Bodies.circle(x, y, radius);
+
+    let r = Math.floor(Math.random() * 255);
+    let g = Math.floor(Math.random() * 255);
+    let b = Math.floor(Math.random() * 255);
+    let bookColor = 'rgb(' + r + ',' + g + ',' + b + ')';
+
+    ball.render.fillStyle = bookColor;
+    ball.render.lineWidth = 2;
+    ball.render.outline = true;
+
+
+    if (mass) {
+        Matter.Body.setMass(ball, mass);
+        ball.render.text = {content: mass + ' lbs', color: 'black'};
+
+        const weightLabel = document.createElement('div');
+        weightLabel.innerHTML = mass + ' lbs';
+        weightLabel.style.position = 'absolute';
+        weightLabel.style.top = 2 + 'px';
+        weightLabel.style.left = x + 'px';
+        weightLabel.style.color = 'black';
+        weightLabel.style.width = width + 'px';
+        weightLabel.style.height = 30 + 'px';
+        weightLabel.style.textAlign = 'center';
+        weightLabel.style.fontSize = '10px';
+        weightLabel.style.marginLeft = '-' + width / 2 + 'px';
+        weightLabel.style.backgroundColor = 'rgba(' + r + ',' + g + ',' + b + ', 0.2)';
+        bookWeightsViewContainer.appendChild(weightLabel);
+    }
+    Composite.add(engine.world, ball);
+}
+
+window.addEventListener('load', function () {
     setup();
 });
