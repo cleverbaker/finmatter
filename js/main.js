@@ -1,4 +1,3 @@
-
 const {Engine, Body, Bodies, World, Composite, Render, Runner} = Matter;
 
 let engine;
@@ -4593,9 +4592,9 @@ window.addEventListener('load', function () {
 
 const fileInput = document.getElementById("csvFile");
 
-let data = [ [], function (data) {
+let data = [[], function (data) {
     this[0] = data;
-} ];
+}];
 
 fileInput.addEventListener("change", function () {
     const file = fileInput.files[0];
@@ -4644,7 +4643,7 @@ function handleCsvFile(file) {
         })
     }
 
-    function addDrops (amount, is_positive, last_drop_time, last_drop_radius) {
+    function addDrops(amount, is_positive, last_drop_time, last_drop_radius) {
 
     }
 
@@ -4669,27 +4668,28 @@ function handleCsvFile(file) {
 
         let current_delay = 0;
 
-        let current_list = {}
+        let current_list = {};
+
+        let current_date;
 
 
         for (let i = 0; i < 10; i++) {
+            console.log(i, current_list);
+            console.log(json[i]);
             if (json[i]["Amount"]) {
                 console.log(json[i]);
                 console.log(json[i]["Amount"]);
                 console.log(json[i]["Posting Date"]);
                 console.log("Posting Date");
-            } else if (json[i]['"Amount"']) {
-                console.log(json[i]);
-                console.log(json[i]['"Amount"']);
-                console.log(json[i]['"Posting Date"']);
-                console.log('"Posting Date"');
 
                 // parse the Posting Date and save as current_time
-                const current_date = new Date(Date.parse(json[i]['"Posting Date"']));
+                current_date = new Date(Date.parse(json[i]["Posting Date"]));
 
                 console.log(current_date);
 
                 if (current_list[current_date.toDateString()]) {
+                    console.log('******* 2222!!!  current_list[current_date.toDateString()]  exists   2222!!!' +
+                        ' *********');
                     if (last_drop_time) {
                         current_delay = last_drop_time - current_date.getDate();
                         last_drop_time = current_date.getDate();
@@ -4710,8 +4710,24 @@ function handleCsvFile(file) {
                         current_delay = last_drop_time - current_date.getDate();
                         last_drop_time = current_date.getDate();
 
+
+                        console.log('******* 0000000 *********');
+
                         console.log(current_date.getDate())
+
+                        current_list[current_date.toDateString()] = [{
+                            "radius10x":
+                                (Math.round(Math.sqrt(Math.abs(Math.round(Number(json[i]['"Amount"']) * (
+                                    100 / 3.14)) / 100)) * 1000) / 100),
+                            "data":
+                                "" + `amount: ${json[i]['"Amount"']}; current_delay: ${current_delay}; date: ${last_drop_time}`
+                        }];
+
                     } else {
+
+
+                        console.log("******* 44444  last_drop_time doesn't exist yet  44444 ********");
+
 
                         last_drop_time = current_date.getDate();
 
@@ -4729,10 +4745,77 @@ function handleCsvFile(file) {
                         console.log(current_date.getDate())
                     }
                 }
+            } else if (json[i]['"Amount"']) {
+                console.log(json[i]);
+                console.log(json[i]['"Amount"']);
+                console.log(json[i]['"Posting Date"']);
+                console.log('"Posting Date"');
+
+                // parse the Posting Date and save as current_time
+                const current_date = new Date(Date.parse(json[i]['"Posting Date"']));
+
+                console.log(current_date);
+
+                if (current_list[current_date.toDateString()]) {
+
+
+                    console.log('##v2##  ******* 2222!!!  current_list[current_date.toDateString()]  exists   2222!!!' +
+                        ' *********');
+
+
+                    if (last_drop_time) {
+                        current_delay = last_drop_time - current_date.getDate();
+                        last_drop_time = current_date.getDate();
+                    } else {
+                        last_drop_time = current_date.getDate();
+                    }
+                    current_list[current_date.toDateString()].push({
+                        "radius10x":
+                            (Math.round(Math.sqrt(Math.abs(Math.round(Number(json[i]['"Amount"']) * (
+                                100 / 3.14)) / 100)) * 1000) / 100),
+                        "data":
+                            `amount: ${json[i]['"Amount"']}; current_delay: ${current_delay}; date: ${last_drop_time}`
+                    });
+
+                    console.log(current_date.getDate())
+                } else {
+                    if (last_drop_time) {
+                        current_delay = last_drop_time - current_date.getDate();
+                        last_drop_time = current_date.getDate();
+
+                        console.log('******* 1111111 *********');
+                        console.log(current_date.getDate());
+
+
+                        current_list[current_date.toDateString()] = [{
+                            "radius10x":
+                                (Math.round(Math.sqrt(Math.abs(Math.round(Number(json[i]['"Amount"']) * (
+                                    100 / 3.14)) / 100)) * 1000) / 100),
+                            "data":
+                                "" + `amount: ${json[i]['"Amount"']}; current_delay: ${current_delay}; date: ${last_drop_time}`
+                        }];
+
+                    } else {
+
+                        last_drop_time = current_date.getDate();
+
+                        console.log(current_date.getDate())
+
+                        current_list[current_date.toDateString()] = [{
+                            "radius10x":
+                                (Math.round(Math.sqrt(Math.abs(Math.round(Number(json[i]['"Amount"']) * (
+                                    100 / 3.14)) / 100)) * 1000) / 100),
+                            "data":
+                                "" + `amount: ${json[i]['"Amount"']}; current_delay: ${current_delay}; date: ${last_drop_time}`
+                        }];
+
+                        console.log(current_date.getDate())
+                    }
+                }
             }
         }
 
-        console.log(current_list);
+        console.log('current_list', current_list);
 
         let temp = [];
 
@@ -4740,31 +4823,19 @@ function handleCsvFile(file) {
             temp.push(current_list[key]);
         }
 
-
-
-
         let temp_reversed = temp.reverse();
-        /*
-            for (let i = 0; i < temp_reversed.length; i++) {
+
+        console.log('temp_reversed', temp_reversed);
+
+        let timeoffset = 0;
+
+        for (let i = 0; i < temp_reversed.length; i++) {
             for (let j = 0; j < temp_reversed[i].length; j++) {
-            if (j) {
-            setTimeout(() => {
-            console.log(temp_reversed[i][j]);
-        }, 0);
-        } else {
-            setTimeout(() => {
-            console.log(temp_reversed[i][j]);
-        }, 0);
-        }
-        }
-        }
-        */
-
-
-        for (let i = 0; i < 3; i++) {
-            for (let j = 0; j < temp_reversed.length; j++) {
-                // TODO: at the end of the timeout queue, add 4 seconds and then call addCircle
-                setTimeout()
+                timeoffset = (i === 0 ? 4000 : 3000) + timeoffset;
+                setTimeout(() => {
+                    console.log(i, j, temp_reversed[i][j].radius10x, timeoffset)
+                    createBalls(temp_reversed[i][j].radius10x, 300, 100);
+                }, timeoffset);
             }
         }
 
@@ -4816,7 +4887,7 @@ function handleCsvFile(file) {
     });*/
 
 
-    document.addEventListener('click', function() {
+    document.addEventListener('click', function () {
         console.log(data[0]);
 
         const firstHundred = data[0].slice(0, 10);
