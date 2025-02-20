@@ -4673,7 +4673,7 @@ function handleCsvFile(file) {
         let current_date;
 
 
-        for (let i = 0; i < 10; i++) {
+        for (let i = 0; i < 100; i++) {
             console.log(i, current_list);
             console.log(json[i]);
             if (json[i]["Amount"]) {
