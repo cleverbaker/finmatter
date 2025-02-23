@@ -70,7 +70,6 @@
         const reader = new FileReader();
         let result = [];
 
-
         function csvToJson(text, quoteChar = '"', delimiter = ",") {
             text = text.trim()
             let rows = text.split("\n")
@@ -207,9 +206,6 @@
                 }
             }
 
-
-
-
             /*
              const lines = csv.split("\n");
              const headers = lines[0].split(",");
@@ -233,9 +229,7 @@
             }, 3000);
         };
 
-
         reader.readAsText(file);
-
 
         reader.onerror = function () {
             alert("Failed to read the file.");
@@ -274,7 +268,6 @@
             }
         });
         
-        
         return result;
     }
 
@@ -282,6 +275,8 @@
     function downloadCsv(json) {
         const replacer = (key, value) => value === null ? '' : value;
         const header = Object.keys(json[0]);
+
+        // convert json to csv
         let csv = json.map(row => header.map(fieldName => JSON.stringify(row[fieldName], replacer)).join(','));
         csv.unshift(header.join(','));
         csv = csv.join('\r\n');

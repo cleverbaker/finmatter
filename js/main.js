@@ -13,7 +13,6 @@ let canvas;
 
 let bookWeightsViewContainer = document.createElement("div");
 
-
 const shelf_1_max_height = 9;
 const shelf_2_max_height = 9;
 const shelf_3_max_height = 13;
@@ -4498,15 +4497,17 @@ const customRender = (event) => {
     });
 };
 
-
 function addFiveBooks() {
-    let width = 20 + (Math.floor(Math.random() * 8) - Math.floor(Math.random() * 8))
+    let width;
     let currentX = 100;
     let mass;
+    let height;
 
-    for (let i = 0; i < 21; i++) {
+    for (let i = 0; i < 13; i++) {
         mass = booksData[i].dimensions_structured.weight.value ? Math.round(booksData[i].dimensions_structured.weight.value * 100) / 100 : false;
-        createBooks(width, 100 + Math.floor(Math.random() * 8), currentX, 100, mass);
+        width = Math.round(booksData[i].dimensions_structured.width.value * 100) / 5;
+        height = Math.round(booksData[i].dimensions_structured.height.value * 100) / 5;
+        createBooks(width, (height/2), currentX, (100 - (Math.round(height) ), mass));
         currentX += width + 4;
     }
 }
@@ -4547,7 +4548,6 @@ function createBooks(width, height, x, y, mass) {
     // Replace the default render with the custom render
 
 }
-
 
 function createBalls(radius, x, y, mass) {
     let ball = Bodies.circle(x, y, radius);
@@ -4613,7 +4613,6 @@ function handleCsvFile(file) {
 
     const reader = new FileReader();
     let result = [];
-
 
     function csvToJson(text, quoteChar = '"', delimiter = ",") {
         text = text.trim()
