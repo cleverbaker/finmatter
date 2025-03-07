@@ -4389,6 +4389,7 @@ function setup() {
     bookWeightsViewContainer.style.width = canvas.width + 'px';
     bookWeightsViewContainer.style.height = 30 + 'px';
     bookWeightsViewContainer.style.outline = '1px solid gray';
+    bookWeightsViewContainer.id = 'book-weights-view-container';
 
     document.body.appendChild(bookWeightsViewContainer);
 
@@ -4418,8 +4419,8 @@ function setup() {
     let floor = Bodies.rectangle(300, 600, 600, 60, {isStatic: true});
     Composite.add(engine.world, floor);
 
-    let wall_left = Bodies.rectangle(3, 300, 6, 600, {isStatic: true});
-    let wall_right = Bodies.rectangle(597, 300, 6, 600, {isStatic: true});
+    let wall_left = Bodies.rectangle(103, 400, 6, 400, {isStatic: true});
+    let wall_right = Bodies.rectangle(497, 400, 6, 400, {isStatic: true});
     Composite.add(engine.world, wall_left);
     Composite.add(engine.world, wall_right);
 
@@ -4507,7 +4508,7 @@ function addFiveBooks() {
         mass = booksData[i].dimensions_structured.weight.value ? Math.round(booksData[i].dimensions_structured.weight.value * 100) / 100 : false;
         width = Math.round(booksData[i].dimensions_structured.width.value * 100) / 5;
         height = Math.round(booksData[i].dimensions_structured.height.value * 100) / 5;
-        createBooks(width, (height/2), currentX, (100 - (Math.round(height) ), mass));
+        createBooks(width, (height/2), currentX, (-1500 - (Math.round(height) ), mass));
         currentX += width + 4;
     }
 }
@@ -4549,8 +4550,12 @@ function createBooks(width, height, x, y, mass) {
 
 }
 
+function createBookDataLabels(r, g, b, a) {
+
+}
+
 function createBalls(radius, x, y, mass) {
-    let ball = Bodies.circle(x, y, radius);
+    let ball = Bodies.circle(x, -100, radius);
 
     let r = Math.floor(Math.random() * 255);
     let g = Math.floor(Math.random() * 255);
@@ -4646,6 +4651,10 @@ function handleCsvFile(file) {
 
     }
 
+    function css(element, style) {
+        for (const property in style)
+            element.style[property] = style[property];
+    }
 
     reader.onload = function (e) {
 
@@ -4671,10 +4680,38 @@ function handleCsvFile(file) {
 
         let current_date;
 
+        let datatable = document.createElement('table');
+        datatable.setAttribute('id', 'datatable');
+        css(datatable, {'width': '100%', 'position': 'absolute', 'top': (bookWeightsViewContainer.offsetTop + bookWeightsViewContainer.clientHeight + 18) + 'px', 'left': '0'})
+
+        // datatable headers: Number, Date, Amount, Description, Reference, Balance
+        let headers = ['Number', 'Date', 'Amount', 'Description', 'Reference Number', 'Balance'];
+        let header_row = document.createElement('tr');
+        headers.forEach(header => {
+            let th = document.createElement('th');
+            th.innerHTML = header;
+            header_row.appendChild(th);
+        });
+        datatable.appendChild(header_row);
+
+        // append the datatable to the body
+        document.body.appendChild(datatable);
+
+        // add first row of data to the datatable
+        let row = document.createElement('tr');
+        let cell = document.createElement('td');
+
+
+        let amount = 0;
+        let date = '';
+        let description = '';
+        let reference = '';
+        let balance = 0;
 
         for (let i = 0; i < 100; i++) {
             console.log(i, current_list);
             console.log(json[i]);
+
             if (json[i]["Amount"]) {
                 console.log(json[i]);
                 console.log(json[i]["Amount"]);
@@ -4685,6 +4722,12 @@ function handleCsvFile(file) {
                 current_date = new Date(Date.parse(json[i]["Posting Date"]));
 
                 console.log(current_date);
+
+                amount = json[i]["Amount"];
+                date = json[i]["Posting Date"];
+                description = json[i]["Description"];
+                reference = json[i]["Reference Number"];
+                balance = json[i]["Balance"];
 
                 if (current_list[current_date.toDateString()]) {
                     console.log('******* 2222!!!  current_list[current_date.toDateString()]  exists   2222!!!' +
@@ -4755,6 +4798,12 @@ function handleCsvFile(file) {
 
                 console.log(current_date);
 
+                amount = json[i]['"Amount"'];
+                date = json[i]['"Posting Date"'];
+                description = json[i]['"Description"'];
+                reference = json[i]['"Reference Number"'];
+                balance = json[i]['"Balance"'];
+
                 if (current_list[current_date.toDateString()]) {
 
 
@@ -4796,9 +4845,10 @@ function handleCsvFile(file) {
 
                     } else {
 
-                        last_drop_time = current_date.getDate();
-
                         console.log(current_date.getDate())
+
+
+                        last_drop_time = current_date.getDate();
 
                         current_list[current_date.toDateString()] = [{
                             "radius10x":
@@ -4812,6 +4862,34 @@ function handleCsvFile(file) {
                     }
                 }
             }
+
+            // add row of data to the datatable
+            row = document.createElement('tr');
+            cell = document.createElement('td');
+            cell.id = `c-${i}-Number`;
+            cell.innerHTML = `${i}`;
+            row.appendChild(cell);
+            cell = document.createElement('td');
+            cell.id = `c-${i}-Date`;
+            cell.innerHTML = date;
+            row.appendChild(cell);
+            cell = document.createElement('td');
+            cell.id = `c-${i}-Amount`;
+            cell.innerHTML = `${amount}`;
+            row.appendChild(cell);
+            cell = document.createElement('td');
+            cell.id = `c-${i}-Description`;
+            cell.innerHTML = description;
+            row.appendChild(cell);
+            cell = document.createElement('td');
+            cell.id = `c-${i}-Reference`;
+            cell.innerHTML = reference;
+            row.appendChild(cell);
+            cell = document.createElement('td');
+            cell.id = `c-${i}-Balance`;
+            cell.innerHTML = `${balance}`;
+            row.appendChild(cell);
+            datatable.appendChild(row);
         }
 
         console.log('current_list', current_list);
@@ -4832,8 +4910,9 @@ function handleCsvFile(file) {
             for (let j = 0; j < temp_reversed[i].length; j++) {
                 timeoffset = (i === 0 ? 4000 : 3000) + timeoffset;
                 setTimeout(() => {
-                    console.log(i, j, temp_reversed[i][j].radius10x, timeoffset)
+                    console.log(i, j, temp_reversed[i][j].radius10x, temp_reversed[i][j], timeoffset)
                     createBalls(temp_reversed[i][j].radius10x, 300, 100);
+                   // createRow(temp_reversed[i][j].radius10x, 300, 100);
                 }, timeoffset);
             }
         }
